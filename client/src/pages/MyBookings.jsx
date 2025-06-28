@@ -1,5 +1,6 @@
+// ✅ File: src/pages/MyBookings.jsx
+
 import React, { useEffect, useState } from "react";
-import { dummyBookingData } from "../assets/assets";
 import Loading from "../components/Loading";
 import BlurCircle from "../components/BlurCircle";
 import timeFormat from "../lib/timeFormat";
@@ -8,32 +9,84 @@ import { useAppContext } from "../context/AppContext";
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY;
-
-  const {axios, getToken ,user, image_base_url} = useAppContext();
-
+  const { axios, getToken, user, image_base_url } = useAppContext();
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const getMyBookings = async () => {
     try {
-      const {data}= await axios.get('/api/user/bookings',{
-        headers:{Authorization :`Bearer ${await getToken()}`}
-      })
-      if(data.success){
-        setBookings(data.bookings)
+      const { data } = await axios.get("/api/user/bookings", {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      });
+      if (data.success) {
+        setBookings(data.bookings);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if(user){
+  const loadRazorpayScript = () =>
+    new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+
+  const handlePayment = async (bookingId, amount) => {
+  const isLoaded = await loadRazorpayScript();
+  if (!isLoaded) return alert("Failed to load Razorpay");
+
+  const { data } = await axios.post(
+    "/api/payment/create-order",
+    { bookingId },
+    { headers: { Authorization: `Bearer ${await getToken()}` } }
+  );
+
+  const options = {
+    key: data.key,
+    amount: data.amount,
+    currency: "INR",
+    name: "QuickShow",
+    description: "Movie Ticket Booking",
+    order_id: data.orderId,
+    handler: async (response) => {
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
+
+      await axios.post(
+        "/api/payment/mark-paid",
+        {
+          bookingId,
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+          razorpaySignature: razorpay_signature,
+        },
+        { headers: { Authorization: `Bearer ${await getToken()}` } }
+      );
+      alert("Payment Successful");
       getMyBookings();
-    }
-   
+    },
+    prefill: {
+      name: user?.fullName,
+      email: user?.emailAddresses?.[0]?.emailAddress,
+    },
+    theme: {
+      color: "#F37254",
+    },
+  };
+
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+};
+
+
+  useEffect(() => {
+    if (user) getMyBookings();
   }, [user]);
+
   return !isLoading ? (
     <div className="relative px-6 md:px-16 lg:px-40 pt-30 md:pt-40 min-h-[80vh]">
       <BlurCircle top="100px" left="100px" />
@@ -49,11 +102,11 @@ const MyBookings = () => {
         >
           <div className="flex flex-col md:flex-row">
             <img
-              src={image_base_url+item.show.movie.poster_path}
+              src={image_base_url + item.show.movie.poster_path}
               alt=""
               className="md:max-w-45 aspect-video h-auto object-cover object-bottom rounded"
             />
-            <div className=" flex flex-col p-4">
+            <div className="flex flex-col p-4">
               <p className="text-lg font-semibold">{item.show.movie.title}</p>
               <p className="text-gray-400 text-sm">
                 {timeFormat(item.show.movie.runtime)}
@@ -71,7 +124,10 @@ const MyBookings = () => {
                 {item.amount}
               </p>
               {!item.isPaid && (
-                <button className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer">
+                <button
+                  onClick={() => handlePayment(item._id, item.amount)}
+                  className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer"
+                >
                   Pay Now
                 </button>
               )}

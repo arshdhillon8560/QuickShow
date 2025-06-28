@@ -9,6 +9,7 @@ import showRouter from "./routes/showRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,7 @@ const PORT = process.env.PORT || 3000;
   app.use("/api/booking",bookingRouter)
   app.use('/api/admin',adminRouter);
   app.use("/api/user", userRouter);
+  app.use("/api/payment", paymentRoutes);
 
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
