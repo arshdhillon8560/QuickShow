@@ -2,16 +2,14 @@ import { clerkClient } from "@clerk/express";
 import Booking from "../models/booking.js";
 import Movie from "../models/Movie.js";
 
-// ✅ Fixed: Booking fetch with movie data resolved via `movie.id`
 export const getuserBookings = async (req, res) => {
   try {
     const userId = req.auth().userId;
 
-    // Populate nested movie inside show
     const bookings = await Booking.find({ user: userId })
       .populate({
         path: "show",
-        populate: { path: "movie" }, // ✅ Deep populate movie
+        populate: { path: "movie" },
       })
       .sort({ createdAt: -1 });
 
@@ -22,7 +20,6 @@ export const getuserBookings = async (req, res) => {
   }
 };
 
-// ✅ Toggle favorite movie
 export const updateFavorite = async (req, res) => {
   try {
     const { movieId } = req.body;
@@ -52,7 +49,7 @@ export const updateFavorite = async (req, res) => {
   }
 };
 
-// ✅ Fetch all favorite movies
+//Fetch all favorite movies
 export const getFavorites = async (req, res) => {
   try {
     const user = await clerkClient.users.getUser(req.auth().userId);

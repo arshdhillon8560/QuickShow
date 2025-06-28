@@ -7,7 +7,10 @@ const fetchWithRetry = async (url, headers, retries = 1) => {
   try {
     return await axios.get(url, { headers, timeout: 5000 });
   } catch (err) {
-    if (retries > 0 && (err.code === "ECONNRESET" || err.code === "ETIMEDOUT")) {
+    if (
+      retries > 0 &&
+      (err.code === "ECONNRESET" || err.code === "ETIMEDOUT")
+    ) {
       console.warn(`Retrying TMDB fetch: ${url}`);
       return await fetchWithRetry(url, headers, retries - 1);
     }
@@ -31,7 +34,12 @@ export const getNowPlayingMovies = async (req, res) => {
     res.json({ success: true, movies });
   } catch (error) {
     console.error("Error fetching now playing movies:", error.message);
-    res.status(500).json({ success: false, message: "Failed to fetch movies. Please try again." });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Failed to fetch movies. Please try again.",
+      });
   }
 };
 
@@ -49,8 +57,14 @@ export const addShow = async (req, res) => {
 
     if (!movie) {
       const [detailsRes, creditsRes] = await Promise.all([
-        fetchWithRetry(`https://api.themoviedb.org/3/movie/${movieId}`, headers),
-        fetchWithRetry(`https://api.themoviedb.org/3/movie/${movieId}/credits`, headers),
+        fetchWithRetry(
+          `https://api.themoviedb.org/3/movie/${movieId}`,
+          headers
+        ),
+        fetchWithRetry(
+          `https://api.themoviedb.org/3/movie/${movieId}/credits`,
+          headers
+        ),
       ]);
 
       const movieData = detailsRes.data;
@@ -91,7 +105,9 @@ export const addShow = async (req, res) => {
       await Show.insertMany(showsToCreate);
       res.json({ success: true, message: "Shows added successfully" });
     } else {
-      res.status(400).json({ success: false, message: "No show times provided" });
+      res
+        .status(400)
+        .json({ success: false, message: "No show times provided" });
     }
   } catch (error) {
     console.error("Error in addShow:", error.message);
@@ -144,6 +160,8 @@ export const getShow = async (req, res) => {
     res.json({ success: true, movie, dateTime });
   } catch (error) {
     console.error("Error fetching show:", error.message);
-    res.status(500).json({ success: false, message: "Failed to fetch show details" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch show details" });
   }
 };

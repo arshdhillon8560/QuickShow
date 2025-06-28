@@ -1,4 +1,3 @@
-// server/routes/paymentRoutes.js
 import express from "express";
 import { requireAuth } from "@clerk/express";
 import { createOrder, markBookingPaid } from "../controllers/paymentController.js";

@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import BlurCircle from "../components/BlurCircle";
 import timeFormat from "../lib/timeFormat";
@@ -6,6 +5,7 @@ import { dateFormat } from "../lib/dateFormat";
 import { useAppContext } from "../context/AppContext";
 import { Printer } from "lucide-react";
 import logo from "../assets/logo.svg";
+import { useState,useEffect } from "react";
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY;
