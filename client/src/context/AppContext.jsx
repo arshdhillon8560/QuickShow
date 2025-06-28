@@ -1,10 +1,14 @@
+// ✅ File: src/context/AppContext.jsx
+
 import { useState, useEffect, createContext, useContext } from "react";
 import axios from "axios";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+});
 
 export const AppContext = createContext();
 
@@ -22,7 +26,7 @@ export const AppProvider = ({ children }) => {
 
   const fetchIsAdmin = async () => {
     try {
-      const { data } = await axios.get("/api/admin/is-admin", {
+      const { data } = await axiosInstance.get("/api/admin/is-admin", {
         headers: {
           Authorization: `Bearer ${await getToken()}`,
         },
@@ -30,7 +34,7 @@ export const AppProvider = ({ children }) => {
 
       setIsAdmin(data.isAdmin);
     } catch (error) {
-      setIsAdmin(false); 
+      setIsAdmin(false);
       if (
         location.pathname.startsWith("/admin") &&
         error?.response?.status === 403 &&
@@ -44,7 +48,7 @@ export const AppProvider = ({ children }) => {
 
   const fetchShows = async () => {
     try {
-      const { data } = await axios.get("/api/show/all");
+      const { data } = await axiosInstance.get("/api/show/all");
       if (data.success) {
         setShows(data.shows);
       } else {
@@ -57,7 +61,7 @@ export const AppProvider = ({ children }) => {
 
   const fetchFavoriteMovies = async () => {
     try {
-      const { data } = await axios.get("/api/user/favorites", {
+      const { data } = await axiosInstance.get("/api/user/favorites", {
         headers: {
           Authorization: `Bearer ${await getToken()}`,
         },
@@ -85,7 +89,7 @@ export const AppProvider = ({ children }) => {
   }, [user]);
 
   const value = {
-    axios,
+    axios: axiosInstance,
     fetchIsAdmin,
     user,
     getToken,
