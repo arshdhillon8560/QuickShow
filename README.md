@@ -74,6 +74,9 @@ quickshow/
 - Manage movie shows & time slots
 - Revenue analytics
 ![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-4.png)
+![alt text](image-5.png)
 
 ### ⏱️ Background Tasks
 - Confirmation email after payment
