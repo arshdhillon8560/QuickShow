@@ -63,11 +63,17 @@ quickshow/
 - Print-friendly, dark-themed ticket
 - Includes seat, time, amount, booking ID
 
-### 🛠️ Admin Panel
+
+#### 🔒 `/admin` Route Security & Usage
+
+- The `https://quick-show-main.vercel.app/admin` route provides access to the admin panel.
+- Only users with the role: `"admin"` can access this route; all others are denied entry.
+- Admins can list all existing shows and add new shows for the application through this panel.
 - Secure dashboard
 - View all bookings
 - Manage movie shows & time slots
 - Revenue analytics
+![alt text](image-1.png)
 
 ### ⏱️ Background Tasks
 - Confirmation email after payment
@@ -137,3 +143,5 @@ npm run dev
 - Support for multiple payment providers (e.g., Stripe)
 
 ---
+
+
