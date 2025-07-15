@@ -5,6 +5,8 @@
 
 QuickShow is a modern, full-stack application for seamless movie ticket booking. Browse movies, view details, book seats, and pay securely with Razorpay. Enjoy a robust admin dashboard, secure authentication via Clerk, and automated background jobs powered by Inngest.
 
+https://drive.google.com/file/d/1CYfFLpSUWEUdpvMx8xzTfYXdh_uVkBcz/view?usp=sharing
+
 ---
 
 ## 🚀 Tech Stack
