@@ -10,6 +10,11 @@ QuickShow is a modern, full-stack application for seamless movie ticket booking.
 https://github.com/user-attachments/assets/c22e1b7a-4941-486e-a832-e99fc0e0fc3a
 
 
+https://github.com/user-attachments/assets/623748e3-1069-4123-858f-0750a4b3f59b
+
+
+
+
 
 ---
 
